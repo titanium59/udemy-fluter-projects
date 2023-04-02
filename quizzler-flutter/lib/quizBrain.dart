@@ -32,4 +32,19 @@ class QuizBrain {
     return _quizQuestions[_questionNumber].questionAnswer;
   }
 
+  bool isFinished() {
+
+    if(_questionNumber < _quizQuestions.length - 1){
+      return false;
+    }
+    print("Finished");
+    return true;
+  }
+
+  void reset(){
+    _questionNumber = 0;
+  }
+
+
+
 }

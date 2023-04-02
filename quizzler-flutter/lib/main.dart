@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'quizBrain.dart';
 
 QuizBrain quizBrain = QuizBrain();
@@ -28,20 +29,38 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  List<Icon> scoreKeeper = [];
 
-  List<Icon> scoreKeeper = [
-    Icon(
-      Icons.check,
-      color: Colors.green,
-    ),
-    Icon(
-      Icons.close,
-      color: Colors.red,
+  void checkAnswer(bool userPickedAnswer) {
 
-    )
-  ];
+    setState(() {
+      if(quizBrain.isFinished()){
+        Alert(context: context, title: "Quizzler", desc: "Reached the end").show();
+        quizBrain.reset();
+        scoreKeeper = [];
+      }
+      else {
+        bool correctAnswer = quizBrain.getQuizAnswer();
+        if (userPickedAnswer == correctAnswer) {
+          scoreKeeper.add(
+            Icon(
+              Icons.check,
+              color: Colors.green,
+            ),
+          );
+        } else {
+          scoreKeeper.add(
+            Icon(
+              Icons.close,
+              color: Colors.red,
+            ),
+          );
+        }
+        quizBrain.nextQuestion();
+      }
+    });
 
-
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +89,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(15.0),
             child: TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.green)
-              ),
+                  backgroundColor: MaterialStateProperty.all(Colors.green)),
               child: Text(
                 'True',
                 style: TextStyle(
@@ -80,18 +98,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                bool correctAnswer = quizBrain.getQuizAnswer();
-                if(correctAnswer == true){
-                  print('user got it right');
-                }
-                else{
-                  print('user got it wrong');
-                }
-                //The user picked true.
-                setState(() {
-                  quizBrain.nextQuestion();
-                });
-
+                checkAnswer(true);
               },
             ),
           ),
@@ -101,8 +108,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(15.0),
             child: TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.red)
-              ),
+                  backgroundColor: MaterialStateProperty.all(Colors.red)),
               child: Text(
                 'False',
                 style: TextStyle(
@@ -111,25 +117,12 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                bool correctAnswer = quizBrain.getQuizAnswer();
-
-                if(correctAnswer == false){
-                  print('user got it right');
-                }
-                else{
-                  print('user got it wrong');
-                }
-                //The user picked false.
-                setState(() {
-                  quizBrain.nextQuestion();
-                });
+                checkAnswer(false);
               },
             ),
           ),
         ),
-        Row(
-          children: scoreKeeper
-        )
+        Row(children: scoreKeeper)
       ],
     );
   }
